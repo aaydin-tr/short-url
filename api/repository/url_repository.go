@@ -14,7 +14,7 @@ type URLRepository struct {
 	collection *mongo.Collection
 }
 
-func NewURLRepository(mongo *mongodb.Mongo, collectionName string) *URLRepository {
+func NewURLRepository(mongo *mongodb.Mongo) *URLRepository {
 	return &URLRepository{
 		client:     mongo.Client,
 		context:    mongo.Context,
