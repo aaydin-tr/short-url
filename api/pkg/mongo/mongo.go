@@ -2,8 +2,10 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
@@ -19,10 +21,12 @@ type Mongo struct {
 	URLsCollection *mongo.Collection
 }
 
-func NewConnection(url, database string) *Mongo {
+func NewConnection(url, username, pass, collectionName, database string) *Mongo {
 	context := context.Background()
 
 	doOnce.Do(func() {
+		url = fmt.Sprintf("mongodb://%s:%s@%s", username, pass, url)
+		fmt.Println(url)
 		cli, err := mongo.Connect(context, options.Client().ApplyURI(url))
 		if err != nil {
 			panic(err)
@@ -32,7 +36,18 @@ func NewConnection(url, database string) *Mongo {
 			panic(err)
 		}
 		zap.S().Info("MongoDB connected successfully")
-		collection = client.Database(database).Collection("urls")
+
+		database := cli.Database(database)
+		isExists := IsCollectionExists(database, context, collectionName)
+
+		if !isExists {
+			err = database.CreateCollection(context, collectionName)
+			if err != nil {
+				zap.S().Error(err)
+			}
+		}
+
+		collection = database.Collection(collectionName)
 		client = cli
 	})
 
@@ -49,4 +64,19 @@ func (m *Mongo) Close() {
 		zap.S().Error("Error while disconnecting from MongoDB", err)
 	}
 	zap.S().Info("MongoDB disconnected successfully")
+}
+
+func IsCollectionExists(database *mongo.Database, context context.Context, collectionName string) bool {
+	collections, err := database.ListCollectionNames(context, bson.D{})
+	if err != nil && err != mongo.ErrNilDocument {
+		zap.S().Error("Error while listing collections", err)
+		return false
+	}
+
+	for _, collection := range collections {
+		if collection == collectionName {
+			return true
+		}
+	}
+	return false
 }
