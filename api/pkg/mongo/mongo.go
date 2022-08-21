@@ -26,7 +26,6 @@ func NewConnection(url, username, pass, collectionName, database string) *Mongo 
 
 	doOnce.Do(func() {
 		url = fmt.Sprintf("mongodb://%s:%s@%s", username, pass, url)
-		fmt.Println(url)
 		cli, err := mongo.Connect(context, options.Client().ApplyURI(url))
 		if err != nil {
 			panic(err)
