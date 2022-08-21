@@ -16,6 +16,7 @@ type ENV struct {
 	RedisPass      string `env:"REDIS_PASS,required"`
 	DefaultTTLDays int    `env:"DEFAULT_TTL_DAYS,required"`
 	Port           string `env:"PORT,required"`
+	LogLevel       string `env:"LOG_LEVEL,required"`
 }
 
 func ParseEnv() *ENV {
