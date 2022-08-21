@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/zap"
 )
 
 var doOnce sync.Once
@@ -28,7 +29,7 @@ func NewConnection(url string) *Mongo {
 		if err != nil {
 			panic(err)
 		}
-
+		zap.S().Info("MongoDB connected successfully")
 		client = cli
 	})
 
@@ -41,5 +42,7 @@ func NewConnection(url string) *Mongo {
 func (m *Mongo) Close() {
 	err := m.Client.Disconnect(m.Context)
 	if err != nil {
+		zap.S().Error("Error while disconnecting from MongoDB", err)
 	}
+	zap.S().Info("MongoDB disconnected successfully")
 }

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
+	"go.uber.org/zap"
 )
 
 type Redis struct {
@@ -25,8 +26,12 @@ func NewRedisClient(URL string, Password string) *Redis {
 			Password: Password,
 		})
 
+		_, err := redisClient.Ping().Result()
+		if err != nil {
+			zap.S().Error("Error while connecting to Redis", err)
+		}
 	})
-
+	zap.S().Info("Redis connected successfully")
 	return &Redis{
 		RDB: redisClient,
 		CTX: context,
