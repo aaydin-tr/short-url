@@ -11,13 +11,15 @@ import (
 
 var doOnce sync.Once
 var client *mongo.Client
+var collection *mongo.Collection
 
 type Mongo struct {
-	Client  *mongo.Client
-	Context context.Context
+	Client         *mongo.Client
+	Context        context.Context
+	URLsCollection *mongo.Collection
 }
 
-func NewConnection(url string) *Mongo {
+func NewConnection(url, database string) *Mongo {
 	context := context.Background()
 
 	doOnce.Do(func() {
@@ -30,12 +32,14 @@ func NewConnection(url string) *Mongo {
 			panic(err)
 		}
 		zap.S().Info("MongoDB connected successfully")
+		collection = client.Database(database).Collection("urls")
 		client = cli
 	})
 
 	return &Mongo{
-		Client:  client,
-		Context: context,
+		Client:         client,
+		Context:        context,
+		URLsCollection: collection,
 	}
 }
 
