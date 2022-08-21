@@ -10,16 +10,16 @@ import (
 )
 
 type ENV struct {
-	MongoURL       string `env:"MONGO_URL,required"`
-	MongoUserName  string `env:"MONGO_USERNAME,required"`
-	MongoPass      string `env:"MONGO_PASS,required"`
-	MongoDB        string `env:"MONGO_DB,required"`
-	MonoCollection string `env:"MONGO_COLLECTION,required"`
-	RedisURL       string `env:"REDIS_URL,required"`
-	RedisPass      string `env:"REDIS_PASS,required"`
-	DefaultTTLDays int    `env:"DEFAULT_TTL_DAYS,required"`
-	Port           string `env:"PORT,required"`
-	LogLevel       string `env:"LOG_LEVEL,required"`
+	MongoURL        string `env:"MONGO_URL,required"`
+	MongoUserName   string `env:"MONGO_USERNAME,required"`
+	MongoPass       string `env:"MONGO_PASS,required"`
+	MongoDB         string `env:"MONGO_DB,required"`
+	MongoCollection string `env:"MONGO_COLLECTION,required"`
+	RedisURL        string `env:"REDIS_URL,required"`
+	RedisPass       string `env:"REDIS_PASS,required"`
+	DefaultTTLDays  int    `env:"DEFAULT_TTL_DAYS,required"`
+	Port            string `env:"PORT,required"`
+	LogLevel        string `env:"LOG_LEVEL,required"`
 }
 
 func ParseEnv() *ENV {
