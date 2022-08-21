@@ -21,7 +21,7 @@ type Mongo struct {
 	URLsCollection *mongo.Collection
 }
 
-func NewConnection(url, username, pass, collectionName, database string) *Mongo {
+func NewMongoDBClient(url, username, pass, collectionName, database string) *Mongo {
 	context := context.Background()
 
 	doOnce.Do(func() {
