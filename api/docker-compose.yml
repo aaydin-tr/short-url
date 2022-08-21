@@ -9,14 +9,14 @@ services:
     ports:
       - "6379:6379"
     restart: always
-  mongo:
+  mongodb:
     image: mongo:latest
     container_name: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=shorturl
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./data:/data/db
     restart: always
