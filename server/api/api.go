@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/AbdurrahmanA/short-url/api/request"
+	"github.com/AbdurrahmanA/short-url/api/middleware"
 	"github.com/AbdurrahmanA/short-url/api/response"
+	"github.com/AbdurrahmanA/short-url/api/routes"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,7 +20,7 @@ func errorHandler(c *fiber.Ctx, err error) error {
 	})
 }
 
-func InitAPI(port string) {
+func InitAPI(port string, routes *routes.Routes) {
 	app := fiber.New(
 		fiber.Config{
 			ErrorHandler: errorHandler,
@@ -30,25 +31,7 @@ func InitAPI(port string) {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Put("/", func(c *fiber.Ctx) error {
-		userIP := c.IP()
-		body := new(request.NewURL)
-
-		if err := c.BodyParser(body); err != nil {
-			return fiber.ErrUnprocessableEntity
-		}
-
-		errors := request.ValidateNewURLRequest(*body)
-		if errors != nil {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(response.ErrorResponse{
-				Message: "Validation failed",
-				Status:  fiber.StatusUnprocessableEntity,
-				Errors:  errors,
-			})
-		}
-
-		return c.SendString(userIP + " " + body.URL)
-	})
+	app.Put("/", middleware.CreateNewShortURLValidation, routes.CreateNewShortURL)
 
 	app.Listen(":" + port)
 }
