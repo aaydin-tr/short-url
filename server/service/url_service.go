@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/AbdurrahmanA/short-url/model"
+	"github.com/AbdurrahmanA/short-url/pkg/helper"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -20,11 +21,19 @@ func NewURLService(repo URLRepo) *URLService {
 	return &URLService{repository: repo}
 }
 
-func (u *URLService) Insert(url, ip string) error {
-	temp := model.URL{
+func (u *URLService) Insert(url, ip string) (*model.URL, error) {
+	createdAt := time.Now()
+	newShortURL := model.URL{
 		OriginalURL: url,
 		OwnerIP:     ip,
-		CreatedAt:   primitive.NewDateTimeFromTime(time.Now()),
+		ShortURL:    helper.CreateShortUrl(url, ip, createdAt),
+		CreatedAt:   primitive.NewDateTimeFromTime(createdAt),
 	}
-	return u.repository.Insert(temp)
+
+	err := u.repository.Insert(newShortURL)
+	if err != nil {
+		return nil, err
+	}
+
+	return &newShortURL, nil
 }
