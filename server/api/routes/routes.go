@@ -42,3 +42,16 @@ func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
 		Data:    dto.ToUrlDTO(row),
 	})
 }
+
+func (r *Routes) RedirectShortURL(c *fiber.Ctx) error {
+	shortURL := c.Locals("shortURL").(string)
+	originalURL, err := r.services.ShortURLService.Get(shortURL)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(response.ErrorResponse{
+			Message: err.Error(),
+			Status:  fiber.StatusNotFound,
+		})
+	}
+
+	return c.Redirect(originalURL, fiber.StatusFound)
+}

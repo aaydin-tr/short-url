@@ -27,10 +27,7 @@ func InitAPI(port string, routes *routes.Routes) {
 		},
 	)
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
-
+	app.Get("/+", middleware.RedirectShortURLValidation, routes.RedirectShortURL)
 	app.Put("/", middleware.CreateNewShortURLValidation, routes.CreateNewShortURL)
 
 	app.Listen(":" + port)
