@@ -12,7 +12,7 @@ import (
 
 type URLRepo interface {
 	Insert(data interface{}) error
-	FindOne(url string) (*model.URL, error)
+	FindOne(url string) (string, error)
 }
 
 type RedisRepo interface {
@@ -25,14 +25,16 @@ type URLService struct {
 	redisShortURLRepo RedisRepo
 	redisAuthRepo     RedisRepo
 	userHourlyLimit   int
+	shortURLCacheTTL  int
 }
 
-func NewURLService(repo URLRepo, redisShortURLRepo, redisAuthRepo RedisRepo, userHourlyLimit int) *URLService {
+func NewURLService(repo URLRepo, redisShortURLRepo, redisAuthRepo RedisRepo, userHourlyLimit int, shortURLCacheTTL int) *URLService {
 	return &URLService{
 		repository:        repo,
 		redisShortURLRepo: redisShortURLRepo,
 		redisAuthRepo:     redisAuthRepo,
 		userHourlyLimit:   userHourlyLimit,
+		shortURLCacheTTL:  shortURLCacheTTL,
 	}
 }
 
@@ -65,4 +67,19 @@ func (u *URLService) Insert(url, ip string) (*model.URL, error) {
 	}
 
 	return &newShortURL, nil
+}
+
+func (u *URLService) Get(shortURL string) (string, error) {
+	shortURLCache := u.redisShortURLRepo.Get(shortURL)
+	shortURLCacheErr := shortURLCache.Err()
+	if shortURLCacheErr != redis.Nil {
+		return shortURLCache.Val(), nil
+	}
+
+	originalURL, err := u.repository.FindOne(shortURL)
+	if err != nil {
+		return "", err
+	}
+	u.redisShortURLRepo.Set(shortURL, originalURL, time.Duration(u.shortURLCacheTTL*24*int(time.Hour)))
+	return originalURL, nil
 }
