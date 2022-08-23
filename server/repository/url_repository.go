@@ -7,6 +7,7 @@ import (
 	mongodb "github.com/AbdurrahmanA/short-url/pkg/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type URLRepository struct {
@@ -31,13 +32,14 @@ func (u *URLRepository) Insert(data interface{}) error {
 	return nil
 }
 
-func (u *URLRepository) FindOne(url string) (*model.URL, error) {
+func (u *URLRepository) FindOne(url string) (string, error) {
 	var result model.URL
-	filter := bson.D{{Key: "original_url", Value: url}}
+	filter := bson.D{{Key: "short_url", Value: url}}
+	opt := options.FindOne().SetProjection(bson.M{"original_url": 1})
 
-	err := u.collection.FindOne(u.context, filter).Decode(&result)
-	if err != nil && err != mongo.ErrNoDocuments {
-		return nil, err
+	err := u.collection.FindOne(u.context, filter, opt).Decode(&result)
+	if err != nil {
+		return "", err
 	}
-	return &result, nil
+	return result.OriginalURL, nil
 }
