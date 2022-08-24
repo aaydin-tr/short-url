@@ -43,3 +43,29 @@ func (u *URLRepository) FindOne(url string) (string, error) {
 	}
 	return result.OriginalURL, nil
 }
+
+func (u *URLRepository) Find(filter interface{}) ([]model.URL, error) {
+	var results []model.URL
+	opt := options.Find().SetProjection(bson.M{"_id": 1, "short_url": 1})
+
+	cursor, err := u.collection.Find(u.context, filter, opt)
+	if err != nil {
+		return nil, err
+	}
+
+	err = cursor.All(u.context, &results)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (u *URLRepository) DeleteMany(filter interface{}) error {
+	_, err := u.collection.DeleteMany(u.context, filter)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
