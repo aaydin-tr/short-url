@@ -38,7 +38,7 @@ func InitAPI(port string, userHourlyLimit int, routes *routes.Routes) {
 	)
 
 	app.Get("/+", middleware.RedirectShortURLValidation, routes.RedirectShortURL)
-	app.Put("/", limiter.New(limiter.Config{Max: userHourlyLimit, LimitReached: limiterHandler, Duration: time.Hour}), middleware.CreateNewShortURLValidation, routes.CreateNewShortURL)
+	app.Put("/", limiter.New(limiter.Config{Max: userHourlyLimit, LimitReached: limiterHandler, Expiration: time.Hour}), middleware.CreateNewShortURLValidation, routes.CreateNewShortURL)
 
 	app.Listen(":" + port)
 }
