@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const sha256Length = 64
@@ -26,4 +28,18 @@ func CreateShortUrl(originalURL, ownerIP string, createdAt time.Time) string {
 
 func randomInt(min, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+func MsgForTag(fe validator.FieldError) string {
+	switch fe.Tag() {
+	case "required":
+		return "This field is required"
+	case "url":
+		return "Invalid URL"
+	case "alphanum":
+		return "Input should be alphanumeric"
+	case "len":
+		return "Input should be 8 characters long"
+	}
+	return fe.Error()
 }
