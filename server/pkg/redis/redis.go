@@ -17,14 +17,13 @@ type Redis struct {
 var redisClient *redis.Client
 var doOnce sync.Once
 
-func NewRedisClient(URL string, Password string, Database int) *Redis {
+func NewRedisClient(URL string, Password string) *Redis {
 	context := context.Background()
 
 	doOnce.Do(func() {
 		redisClient = redis.NewClient(&redis.Options{
 			Addr:     URL,
 			Password: Password,
-			DB:       Database,
 		})
 
 		_, err := redisClient.Ping(context).Result()
@@ -32,7 +31,7 @@ func NewRedisClient(URL string, Password string, Database int) *Redis {
 			zap.S().Error("Error while connecting to Redis", err)
 		}
 	})
-	zap.S().Infof("Redis connected successfully DB: %d", Database)
+	zap.S().Info("Redis connected successfully")
 	return &Redis{
 		RDB: redisClient,
 		CTX: context,

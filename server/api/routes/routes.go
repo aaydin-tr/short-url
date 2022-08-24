@@ -24,14 +24,9 @@ func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
 
 	row, err := r.services.ShortURLService.Insert(body.URL, userIP)
 	if err != nil {
-		errMsg := err.Error()
 		statusCode := fiber.StatusUnprocessableEntity
-		if errMsg == "Too many attempts please try again later" {
-			statusCode = fiber.StatusTooManyRequests
-		}
-
 		return c.Status(statusCode).JSON(response.ErrorResponse{
-			Message: errMsg,
+			Message: err.Error(),
 			Status:  statusCode,
 		})
 	}

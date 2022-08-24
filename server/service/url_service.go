@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"time"
 
 	"github.com/AbdurrahmanA/short-url/model"
@@ -23,37 +22,19 @@ type RedisRepo interface {
 type URLService struct {
 	repository        URLRepo
 	redisShortURLRepo RedisRepo
-	redisAuthRepo     RedisRepo
-	userHourlyLimit   int
 	shortURLCacheTTL  int
 }
 
-func NewURLService(repo URLRepo, redisShortURLRepo, redisAuthRepo RedisRepo, userHourlyLimit int, shortURLCacheTTL int) *URLService {
+func NewURLService(repo URLRepo, redisShortURLRepo RedisRepo, shortURLCacheTTL int) *URLService {
 	return &URLService{
 		repository:        repo,
 		redisShortURLRepo: redisShortURLRepo,
-		redisAuthRepo:     redisAuthRepo,
-		userHourlyLimit:   userHourlyLimit,
 		shortURLCacheTTL:  shortURLCacheTTL,
 	}
 }
 
 func (u *URLService) Insert(url, ip string) (*model.URL, error) {
 	createdAt := time.Now()
-
-	userAttemptCount, err := u.redisAuthRepo.Get(ip).Int()
-	if err != nil && err != redis.Nil {
-		return nil, err
-	} else if err == redis.Nil {
-		u.redisAuthRepo.Set(ip, "0", time.Hour)
-	}
-
-	if userAttemptCount > u.userHourlyLimit {
-		return nil, errors.New("Too many attempts please try again later")
-	}
-
-	u.redisAuthRepo.Set(ip, userAttemptCount+1, redis.KeepTTL)
-
 	newShortURL := model.URL{
 		OriginalURL: url,
 		OwnerIP:     ip,
@@ -61,7 +42,7 @@ func (u *URLService) Insert(url, ip string) (*model.URL, error) {
 		CreatedAt:   primitive.NewDateTimeFromTime(createdAt),
 	}
 
-	err = u.repository.Insert(newShortURL)
+	err := u.repository.Insert(newShortURL)
 	if err != nil {
 		return nil, err
 	}
