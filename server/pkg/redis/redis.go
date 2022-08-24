@@ -53,3 +53,7 @@ func (r *Redis) Set(key string, value interface{}, ttl time.Duration) error {
 func (r *Redis) Get(key string) *redis.StringCmd {
 	return r.RDB.Get(r.CTX, key)
 }
+
+func (r *Redis) Delete(key string) error {
+	return r.RDB.Del(r.CTX, key).Err()
+}
