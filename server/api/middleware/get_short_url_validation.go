@@ -27,7 +27,7 @@ func RedirectShortURLValidation(c *fiber.Ctx) error {
 	body := request.GetURL{URL: c.Params("+")}
 	errors := validateGetURLRequest(body)
 	if len(errors) > 0 {
-		return c.JSON(response.ErrorResponse{
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(response.ErrorResponse{
 			Message: "Validation failed",
 			Status:  fiber.StatusUnprocessableEntity,
 			Errors:  errors,
