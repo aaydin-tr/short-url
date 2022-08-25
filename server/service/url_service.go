@@ -42,6 +42,7 @@ func NewURLService(repo URLRepo, redisShortURLRepo RedisRepo, shortURLCacheTTL, 
 func (u *URLService) Insert(url, ip string) (*model.URL, error) {
 	createdAt := time.Now()
 	newShortURL := model.URL{
+		ID:          primitive.NewObjectID(),
 		OriginalURL: url,
 		OwnerIP:     ip,
 		ShortURL:    helper.CreateShortUrl(url, ip, createdAt),
