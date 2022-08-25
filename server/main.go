@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/AbdurrahmanA/short-url/api"
 	"github.com/AbdurrahmanA/short-url/api/routes"
-	env "github.com/AbdurrahmanA/short-url/pkg/Env"
+	"github.com/AbdurrahmanA/short-url/pkg/env"
 	"github.com/AbdurrahmanA/short-url/pkg/logger"
 	"github.com/AbdurrahmanA/short-url/pkg/mongo"
 	"github.com/AbdurrahmanA/short-url/pkg/redis"
