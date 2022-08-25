@@ -8,6 +8,7 @@ import (
 	"github.com/AbdurrahmanA/short-url/api/routes"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func errorHandler(c *fiber.Ctx, err error) error {
@@ -36,6 +37,8 @@ func InitAPI(port string, userHourlyLimit int, routes *routes.Routes) {
 			ErrorHandler: errorHandler,
 		},
 	)
+
+	app.Use(logger.New())
 
 	app.Get("/+", middleware.RedirectShortURLValidation, routes.RedirectShortURL)
 	app.Put("/", limiter.New(limiter.Config{Max: userHourlyLimit, LimitReached: limiterHandler, Expiration: time.Hour}), middleware.CreateNewShortURLValidation, routes.CreateNewShortURL)
