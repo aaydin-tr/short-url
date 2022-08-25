@@ -13,7 +13,7 @@ type ENV struct {
 	MongoURL          string `env:"MONGO_URL,required"`
 	MongoUserName     string `env:"MONGO_USERNAME,required"`
 	MongoPass         string `env:"MONGO_PASS,required"`
-	MongoDB           string `env:"MONGO_DB,required"`
+	MongoDBName       string `env:"MONGO_DB_NAME,required"`
 	MongoCollection   string `env:"MONGO_COLLECTION,required"`
 	RedisURL          string `env:"REDIS_URL,required"`
 	RedisPass         string `env:"REDIS_PASS,required"`
