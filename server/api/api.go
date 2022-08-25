@@ -34,7 +34,8 @@ func limiterHandler(c *fiber.Ctx) error {
 func InitAPI(port string, userHourlyLimit int, routes *routes.Routes) {
 	app := fiber.New(
 		fiber.Config{
-			ErrorHandler: errorHandler,
+			ErrorHandler:          errorHandler,
+			DisableStartupMessage: true,
 		},
 	)
 
