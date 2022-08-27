@@ -7,6 +7,7 @@ import (
 	"github.com/AbdurrahmanA/short-url/api/response"
 	"github.com/AbdurrahmanA/short-url/api/routes"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -39,6 +40,7 @@ func InitAPI(port string, userHourlyLimit int, routes *routes.Routes) {
 		},
 	)
 
+	app.Use(cors.New())
 	app.Use(logger.New())
 
 	app.Get("/+", middleware.RedirectShortURLValidation, routes.RedirectShortURL)
