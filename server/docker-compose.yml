@@ -13,12 +13,32 @@ services:
     image: mongo:latest
     container_name: mongo
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=shorturl
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
     ports:
-      - "27018:27017"
+      - "27017:27017"
     volumes:
       - ./db:/data/db
     restart: always
-
-
+  api:
+    container_name: api
+    environment:
+      - PORT=${PORT}
+      - MONGO_URL=${MONGO_URL}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASS=${MONGO_PASS}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - MONGO_COLLECTION=${MONGO_COLLECTION}
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PASS=${REDIS_PASS}
+      - URL_CACHE_TTL=${URL_CACHE_TTL}
+      - URL_EXPIRATION_TIME=${URL_EXPIRATION_TIME}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - USER_HOURLY_LIMIT=${USER_HOURLY_LIMIT}
+    build: .
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
