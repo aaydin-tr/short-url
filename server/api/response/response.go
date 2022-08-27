@@ -3,9 +3,9 @@ package response
 import "github.com/AbdurrahmanA/short-url/dto"
 
 type ValidationMessage struct {
-	FailedField string
-	Tag         string
-	Message     string
+	FailedField string `json:"failed_field"`
+	Tag         string `json:"tag"`
+	Message     string `json:"message"`
 }
 
 type ErrorResponse struct {
