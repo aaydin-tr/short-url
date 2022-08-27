@@ -1,5 +1,5 @@
 export const handleNewShortURL = async (url) => {
-    const response = await fetch("http://localhost:8090/", {
+    const response = await fetch(import.meta.env.VITE_API_URL, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
