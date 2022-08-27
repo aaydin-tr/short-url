@@ -12,10 +12,10 @@ type UrlDTO struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-func ToUrlDTO(u *model.URL) UrlDTO {
+func ToUrlDTO(u *model.URL, shortUrlDomain string) UrlDTO {
 	return UrlDTO{
 		OriginalURL: u.OriginalURL,
-		ShortURL:    u.ShortURL,
+		ShortURL:    shortUrlDomain + u.ShortURL,
 		CreatedAt:   u.CreatedAt.Time(),
 	}
 }

@@ -32,7 +32,7 @@ func init() {
 	shortURLService := service.NewURLService(shortURLRepository, Redis, Env.URLCacheTTL, Env.URLExpirationTime)
 
 	Services = service.RegisterServices(shortURLService)
-	Routes = routes.NewShortURLRoutes(Services)
+	Routes = routes.NewShortURLRoutes(Services, Env.ShortURLDomain)
 	AppPort = Env.Port
 
 }

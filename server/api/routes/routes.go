@@ -9,12 +9,14 @@ import (
 )
 
 type Routes struct {
-	services *service.Services
+	services       *service.Services
+	shortUrlDomain string
 }
 
-func NewShortURLRoutes(services *service.Services) *Routes {
+func NewShortURLRoutes(services *service.Services, shortUrlDomain string) *Routes {
 	return &Routes{
-		services: services,
+		services:       services,
+		shortUrlDomain: shortUrlDomain,
 	}
 }
 
@@ -34,7 +36,7 @@ func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(response.SuccessResponse{
 		Message: "New Short URL created successfully",
 		Status:  fiber.StatusCreated,
-		Data:    dto.ToUrlDTO(row),
+		Data:    dto.ToUrlDTO(row, r.shortUrlDomain),
 	})
 }
 

@@ -35,6 +35,7 @@ services:
       - URL_EXPIRATION_TIME=${URL_EXPIRATION_TIME}
       - LOG_LEVEL=${LOG_LEVEL}
       - USER_HOURLY_LIMIT=${USER_HOURLY_LIMIT}
+      - SHORT_URL_DOMAIN=${SHORT_URL_DOMAIN}
     build: .
     ports:
       - ${PORT}:${PORT}

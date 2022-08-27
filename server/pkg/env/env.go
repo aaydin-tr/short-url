@@ -22,6 +22,7 @@ type ENV struct {
 	Port              string `env:"PORT,required"`
 	LogLevel          string `env:"LOG_LEVEL,required"`
 	UserHourlyLimit   int    `env:"USER_HOURLY_LIMIT"`
+	ShortURLDomain    string `env:"SHORT_URL_DOMAIN"`
 }
 
 func ParseEnv() *ENV {
@@ -40,6 +41,10 @@ func ParseEnv() *ENV {
 
 	if cfg.UserHourlyLimit <= 0 {
 		cfg.UserHourlyLimit = 10
+	}
+
+	if cfg.ShortURLDomain == "" {
+		cfg.ShortURLDomain = "http://localhost:" + cfg.Port + "/"
 	}
 
 	return &cfg
