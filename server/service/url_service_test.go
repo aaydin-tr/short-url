@@ -57,10 +57,10 @@ func TestGet(t *testing.T) {
 		}
 
 		if test.err != nil {
-			assert.Equal(t, err, test.err)
+			assert.Equal(t, test.err, err)
 		}
 
-		assert.Equal(t, result, test.expected)
+		assert.Equal(t, test.expected, result)
 	}
 }
 
@@ -77,5 +77,5 @@ func TestDeleteExpiredURLs(t *testing.T) {
 	mockURLRepo.EXPECT().DeleteMany(deleteFilter).Return(nil)
 	err := mockService.DeleteExpiredURLs(MockData)
 
-	assert.Equal(t, err, nil)
+	assert.Equal(t, nil, err)
 }
