@@ -10,15 +10,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type URLRepo interface {
+	Insert(data interface{}) error
+	FindOne(url string) (string, error)
+	Find(filter interface{}) ([]model.URL, error)
+	DeleteMany(filter interface{}) error
+}
+
 type URLRepository struct {
-	client     *mongo.Client
 	context    context.Context
 	collection *mongo.Collection
 }
 
 func NewURLRepository(mongo *mongodb.Mongo) *URLRepository {
 	return &URLRepository{
-		client:     mongo.Client,
 		context:    mongo.Context,
 		collection: mongo.URLsCollection,
 	}

@@ -8,6 +8,7 @@ import (
 
 type Services struct {
 	ShortURLService *URLService
+	RedisService    *RedisService
 }
 
 func RegisterServices(services ...interface{}) *Services {
@@ -20,6 +21,9 @@ func RegisterServices(services ...interface{}) *Services {
 		case "URLService":
 			newServices.ShortURLService = service.(*URLService)
 			zap.S().Info("URLService registered successfully")
+		case "RedisService":
+			newServices.RedisService = service.(*RedisService)
+			zap.S().Info("RedisService registered successfully")
 		default:
 			zap.S().Error("Unknown service: " + serviceType)
 		}

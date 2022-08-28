@@ -3,7 +3,6 @@ package redis
 import (
 	"context"
 	"sync"
-	"time"
 
 	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
@@ -44,16 +43,4 @@ func (r *Redis) Ping() error {
 
 func (r *Redis) Close() error {
 	return r.RDB.Close()
-}
-
-func (r *Redis) Set(key string, value interface{}, ttl time.Duration) error {
-	return r.RDB.Set(r.CTX, key, value, ttl).Err()
-}
-
-func (r *Redis) Get(key string) *redis.StringCmd {
-	return r.RDB.Get(r.CTX, key)
-}
-
-func (r *Redis) Delete(key string) error {
-	return r.RDB.Del(r.CTX, key).Err()
 }
