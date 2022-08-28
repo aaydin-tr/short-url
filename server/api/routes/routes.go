@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"time"
+
 	"github.com/AbdurrahmanA/short-url/api/request"
 	"github.com/AbdurrahmanA/short-url/api/response"
 	"github.com/AbdurrahmanA/short-url/dto"
@@ -9,14 +11,16 @@ import (
 )
 
 type Routes struct {
-	services       *service.Services
-	shortUrlDomain string
+	services         *service.Services
+	shortUrlDomain   string
+	shortURLCacheTTL int
 }
 
-func NewShortURLRoutes(services *service.Services, shortUrlDomain string) *Routes {
+func NewShortURLRoutes(services *service.Services, shortUrlDomain string, shortURLCacheTTL int) *Routes {
 	return &Routes{
-		services:       services,
-		shortUrlDomain: shortUrlDomain,
+		services:         services,
+		shortUrlDomain:   shortUrlDomain,
+		shortURLCacheTTL: shortURLCacheTTL,
 	}
 }
 
@@ -42,6 +46,11 @@ func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
 
 func (r *Routes) RedirectShortURL(c *fiber.Ctx) error {
 	shortURL := c.Locals("shortURL").(string)
+	originalURLCache, err := r.services.RedisService.Get(shortURL)
+	if err == nil {
+		return c.Redirect(originalURLCache, fiber.StatusFound)
+	}
+
 	originalURL, err := r.services.ShortURLService.Get(shortURL)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(response.ErrorResponse{
@@ -49,6 +58,6 @@ func (r *Routes) RedirectShortURL(c *fiber.Ctx) error {
 			Status:  fiber.StatusNotFound,
 		})
 	}
-
+	r.services.RedisService.Set(shortURL, originalURL, time.Duration(r.shortURLCacheTTL*24*int(time.Hour)))
 	return c.Redirect(originalURL, fiber.StatusFound)
 }
