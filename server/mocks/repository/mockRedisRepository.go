@@ -8,7 +8,6 @@ import (
 	reflect "reflect"
 	time "time"
 
-	redis "github.com/go-redis/redis/v8"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -50,11 +49,12 @@ func (mr *MockRedisRepoMockRecorder) Delete(key interface{}) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockRedisRepo) Get(key string) *redis.StringCmd {
+func (m *MockRedisRepo) Get(key string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", key)
-	ret0, _ := ret[0].(*redis.StringCmd)
-	return ret0
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
