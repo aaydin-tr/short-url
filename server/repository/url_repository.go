@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// go:generate mockgen -source=./repository/url_repository.go -destination=./mocks/repository/mockURLRepository.go -package=repository  URLRepo
 type URLRepo interface {
 	Insert(data interface{}) error
 	FindOne(url string) (string, error)

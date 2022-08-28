@@ -21,6 +21,14 @@ type URLService struct {
 	shortUrlTTL int
 }
 
+// go:generate mockgen -source=./service/url_service.go -destination=./mocks/service/mockURLService.go -package=service  IURLService
+type IURLService interface {
+	Insert(url, ip string) (*model.URL, error)
+	Get(shortURL string) (string, error)
+	FindExpiredURLs() ([]model.URL, error)
+	DeleteExpiredURLs(rows []model.URL) error
+}
+
 func NewURLService(repo URLRepo, shortUrlTTL int) *URLService {
 	return &URLService{repository: repo, shortUrlTTL: shortUrlTTL}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
+// go:generate mockgen -source=./service/redis_service.go -destination=./mocks/service/mockRedisService.go -package=service  RedisRepo
 type RedisRepo interface {
 	Set(key string, value interface{}, ttl time.Duration) error
 	Get(key string) *redis.StringCmd
