@@ -11,7 +11,7 @@ import (
 // go:generate mockgen -source=./repository/redis_repository.go -destination=./mocks/repository/mockRedisRepository.go -package=repository  RedisRepo
 type RedisRepo interface {
 	Set(key string, value interface{}, ttl time.Duration) error
-	Get(key string) *redis.StringCmd
+	Get(key string) (string, error)
 	Delete(key string) error
 }
 
@@ -31,8 +31,14 @@ func (r *RedisRepository) Set(key string, value interface{}, ttl time.Duration) 
 	return r.rdb.Set(r.ctx, key, value, ttl).Err()
 }
 
-func (r *RedisRepository) Get(key string) *redis.StringCmd {
-	return r.rdb.Get(r.ctx, key)
+func (r *RedisRepository) Get(key string) (string, error) {
+	cmd := r.rdb.Get(r.ctx, key)
+	cmdErr := cmd.Err()
+	if cmdErr != redis.Nil {
+		return cmd.Val(), nil
+	}
+
+	return "", cmdErr
 }
 
 func (r *RedisRepository) Delete(key string) error {
