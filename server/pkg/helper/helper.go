@@ -12,9 +12,10 @@ import (
 const sha256Length = 64
 const availableBlockCount = 8
 
-func CreateShortUrl(originalURL, ownerIP string, createdAt time.Time) string {
-	byteArr := []byte(originalURL + createdAt.String() + ownerIP)
-	startBlock := createdAt.Second()
+func CreateShortUrl(originalURL, ownerIP string) string {
+	now := time.Now()
+	byteArr := []byte(originalURL + now.String() + ownerIP)
+	startBlock := now.Second()
 	endBlock := startBlock + availableBlockCount
 
 	if endBlock > 64 {
