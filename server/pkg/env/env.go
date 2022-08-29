@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
@@ -25,27 +26,30 @@ type ENV struct {
 	ShortURLDomain    string `env:"SHORT_URL_DOMAIN"`
 }
 
+var doOnce sync.Once
+var Env ENV
+
 func ParseEnv() *ENV {
-	cfg := ENV{}
-	err := godotenv.Load()
+	doOnce.Do(func() {
+		err := godotenv.Load()
 
-	if err != nil {
-		log.Fatalf("Error while loading .env file: %s", err)
-		os.Exit(1)
-	}
+		if err != nil {
+			log.Fatalf("Error while loading .env file: %s", err)
+			os.Exit(1)
+		}
 
-	if err = env.Parse(&cfg); err != nil {
-		fmt.Printf("%+v\n", err)
-		os.Exit(0)
-	}
+		if err = env.Parse(&Env); err != nil {
+			fmt.Printf("%+v\n", err)
+			os.Exit(0)
+		}
 
-	if cfg.UserHourlyLimit <= 0 {
-		cfg.UserHourlyLimit = 10
-	}
+		if Env.UserHourlyLimit <= 0 {
+			Env.UserHourlyLimit = 10
+		}
 
-	if cfg.ShortURLDomain == "" {
-		cfg.ShortURLDomain = "http://localhost:" + cfg.Port + "/"
-	}
-
-	return &cfg
+		if Env.ShortURLDomain == "" {
+			Env.ShortURLDomain = "http://localhost:" + Env.Port + "/"
+		}
+	})
+	return &Env
 }
