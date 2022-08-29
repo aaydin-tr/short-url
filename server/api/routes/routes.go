@@ -6,6 +6,7 @@ import (
 	"github.com/AbdurrahmanA/short-url/api/request"
 	"github.com/AbdurrahmanA/short-url/api/response"
 	"github.com/AbdurrahmanA/short-url/dto"
+	"github.com/AbdurrahmanA/short-url/pkg/helper"
 	"github.com/AbdurrahmanA/short-url/service"
 	"github.com/gofiber/fiber/v2"
 )
@@ -28,7 +29,7 @@ func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
 	userIP := c.IP()
 	body := c.Locals("body").(*request.NewURL)
 
-	row, err := r.services.ShortURLService.Insert(body.URL, userIP)
+	row, err := r.services.ShortURLService.Insert(body.URL, userIP, helper.CreateShortUrl)
 	if err != nil {
 		statusCode := fiber.StatusUnprocessableEntity
 		return c.Status(statusCode).JSON(response.ErrorResponse{
@@ -51,7 +52,7 @@ func (r *Routes) RedirectShortURL(c *fiber.Ctx) error {
 		return c.Redirect(originalURLCache, fiber.StatusFound)
 	}
 
-	originalURL, err := r.services.ShortURLService.Get(shortURL)
+	originalURL, err := r.services.ShortURLService.FindOneWithShortURL(shortURL)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(response.ErrorResponse{
 			Message: err.Error(),
