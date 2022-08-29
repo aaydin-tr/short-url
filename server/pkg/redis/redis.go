@@ -27,7 +27,7 @@ func NewRedisClient(URL string, Password string) *Redis {
 
 		_, err := redisClient.Ping(context).Result()
 		if err != nil {
-			zap.S().Error("Error while connecting to Redis", err)
+			zap.S().Panic("Error while connecting to Redis", err)
 		}
 	})
 	zap.S().Info("Redis connected successfully")

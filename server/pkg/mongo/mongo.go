@@ -40,7 +40,7 @@ func NewMongoDBClient(url, collectionName, database string) *Mongo {
 		if !isExists {
 			err = database.CreateCollection(context, collectionName)
 			if err != nil {
-				zap.S().Error(err)
+				zap.S().Panic(err)
 			}
 		}
 
