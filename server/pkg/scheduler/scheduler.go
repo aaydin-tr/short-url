@@ -4,18 +4,27 @@ import (
 	"time"
 
 	"github.com/AbdurrahmanA/short-url/model"
+	"github.com/AbdurrahmanA/short-url/pkg/env"
 	"github.com/go-co-op/gocron"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/zap"
 )
 
-func InitExpiredScheduler(findExpiredURLs func() ([]model.URL, error), deleteExpiredURLs func(rows []model.URL) error, redisDelete func(key string) error) {
+var ShortUrlTTL = &env.Env.URLExpirationTime
+
+func InitExpiredScheduler(find func(filter interface{}) ([]model.URL, error), deleteMany func(filter interface{}) error, redisDelete func(key string) error) {
 	expiredScheduler := gocron.NewScheduler(time.UTC)
 	expiredScheduler.Every(1).Days().Do(func(
-		findExpiredURLs func() ([]model.URL, error),
-		deleteExpiredURLs func(rows []model.URL) error,
+		find func(filter interface{}) ([]model.URL, error),
+		deleteMany func(filter interface{}) error,
 		redisDelete func(key string) error,
 	) {
-		rows, err := findExpiredURLs()
+		now := time.Now()
+		oneMonthAgo := now.AddDate(0, 0, -(*ShortUrlTTL))
+		filter := bson.M{"created_at": bson.M{"$lt": primitive.NewDateTimeFromTime(oneMonthAgo)}}
+
+		rows, err := find(filter)
 		if err != nil {
 			zap.S().Error("Error while Expired URL Scheduler", err)
 			return
@@ -26,15 +35,19 @@ func InitExpiredScheduler(findExpiredURLs func() ([]model.URL, error), deleteExp
 			return
 		}
 
+		var ids []primitive.ObjectID
 		for _, row := range rows {
+			ids = append(ids, row.ID)
 			redisDelete(row.ShortURL)
 		}
 
-		err = deleteExpiredURLs(rows)
+		deleteFilter := bson.M{"_id": bson.M{"$in": ids}}
+		err = deleteMany(deleteFilter)
+
 		if err != nil {
 			zap.S().Error("Error while deleting expired URLs", err)
 		}
-	}, findExpiredURLs, deleteExpiredURLs, redisDelete)
+	}, find, deleteMany, redisDelete)
 
 	expiredScheduler.SingletonMode()
 	expiredScheduler.SetMaxConcurrentJobs(1, gocron.WaitMode)
