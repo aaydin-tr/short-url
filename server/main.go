@@ -29,7 +29,7 @@ func init() {
 	Redis = redis.NewRedisClient(Env.RedisURL, Env.RedisPass)
 
 	shortURLRepository := repository.NewURLRepository(MongoDB)
-	shortURLService := service.NewURLService(shortURLRepository, Env.URLExpirationTime)
+	shortURLService := service.NewURLService(shortURLRepository)
 
 	shortURLRedisRepository := repository.NewRedisRepository(Redis)
 	shortURLRedisService := service.NewRedisService(shortURLRedisRepository)
@@ -45,6 +45,6 @@ func main() {
 	defer Logger.Sync()
 	defer Redis.Close()
 
-	scheduler.InitExpiredScheduler(Services.ShortURLService.FindExpiredURLs, Services.ShortURLService.DeleteExpiredURLs, Services.RedisService.Delete)
+	scheduler.InitExpiredScheduler(Services.ShortURLService.Find, Services.ShortURLService.DeleteMany, Services.RedisService.Delete)
 	api.InitAPI(AppPort, Env.UserHourlyLimit, Routes)
 }
