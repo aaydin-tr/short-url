@@ -2,17 +2,19 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/AbdurrahmanA/short-url/model"
 	mongodb "github.com/AbdurrahmanA/short-url/pkg/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // go:generate mockgen -source=./repository/url_repository.go -destination=./mocks/repository/mockURLRepository.go -package=repository  URLRepo
 type URLRepo interface {
-	Insert(data interface{}) error
+	Insert(original_url, owner_ip, short_url string) (*model.URL, error)
 	FindOne(url string) (string, error)
 	Find(filter interface{}) ([]model.URL, error)
 	DeleteMany(filter interface{}) error
@@ -30,12 +32,19 @@ func NewURLRepository(mongo *mongodb.Mongo) *URLRepository {
 	}
 }
 
-func (u *URLRepository) Insert(data interface{}) error {
-	_, err := u.collection.InsertOne(u.context, data)
-	if err != nil {
-		return err
+func (u *URLRepository) Insert(original_url, owner_ip, short_url string) (*model.URL, error) {
+	newShortURL := model.URL{
+		ID:          primitive.NewObjectID(),
+		OriginalURL: original_url,
+		OwnerIP:     owner_ip,
+		ShortURL:    short_url,
+		CreatedAt:   primitive.NewDateTimeFromTime(time.Now()),
 	}
-	return nil
+	_, err := u.collection.InsertOne(u.context, newShortURL)
+	if err != nil {
+		return nil, err
+	}
+	return &newShortURL, nil
 }
 
 func (u *URLRepository) FindOne(url string) (string, error) {
