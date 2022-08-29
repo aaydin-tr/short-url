@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,11 +20,10 @@ type Mongo struct {
 	URLsCollection *mongo.Collection
 }
 
-func NewMongoDBClient(url, username, pass, collectionName, database string) *Mongo {
+func NewMongoDBClient(url, collectionName, database string) *Mongo {
 	context := context.Background()
 
 	doOnce.Do(func() {
-		url = fmt.Sprintf("mongodb://%s:%s@%s", username, pass, url)
 		cli, err := mongo.Connect(context, options.Client().ApplyURI(url))
 		if err != nil {
 			panic(err)

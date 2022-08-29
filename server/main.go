@@ -25,7 +25,7 @@ var Services *service.Services
 func init() {
 	Env = env.ParseEnv()
 	Logger = logger.InitLogger(Env.LogLevel)
-	MongoDB = mongo.NewMongoDBClient(Env.MongoURL, Env.MongoUserName, Env.MongoPass, Env.MongoCollection, Env.MongoDBName)
+	MongoDB = mongo.NewMongoDBClient(Env.MongoURL, Env.MongoCollection, Env.MongoDBName)
 	Redis = redis.NewRedisClient(Env.RedisURL, Env.RedisPass)
 
 	shortURLRepository := repository.NewURLRepository(MongoDB)
