@@ -2,6 +2,7 @@ package service
 
 import (
 	"testing"
+	"time"
 
 	"github.com/AbdurrahmanA/short-url/mocks/repository"
 	"github.com/AbdurrahmanA/short-url/model"
@@ -15,6 +16,7 @@ import (
 var mockURLRepo *repository.MockURLRepo
 var mockService *URLService
 
+// TODO: Add more test case
 type testCase struct {
 	arg1     string
 	expected interface{}
@@ -33,7 +35,7 @@ func setup(t *testing.T) func() {
 	defer ct.Finish()
 
 	mockURLRepo = repository.NewMockURLRepo(ct)
-	mockService = NewURLService(mockURLRepo, 90)
+	mockService = NewURLService(mockURLRepo)
 	return func() {
 		mockService = nil
 		defer ct.Finish()
@@ -51,7 +53,7 @@ func TestGet(t *testing.T) {
 
 	for _, test := range tests {
 		mockURLRepo.EXPECT().FindOne(test.arg1).Return(test.expected, test.err)
-		result, err := mockService.Get(test.arg1)
+		result, err := mockService.FindOneWithShortURL(test.arg1)
 		if err != nil && test.err == nil {
 			t.Error(err)
 		}
@@ -64,7 +66,7 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestDeleteExpiredURLs(t *testing.T) {
+func TestDeleteMany(t *testing.T) {
 	td := setup(t)
 	defer td()
 
@@ -75,7 +77,68 @@ func TestDeleteExpiredURLs(t *testing.T) {
 
 	deleteFilter := bson.M{"_id": bson.M{"$in": ids}}
 	mockURLRepo.EXPECT().DeleteMany(deleteFilter).Return(nil)
-	err := mockService.DeleteExpiredURLs(MockData)
+	err := mockService.DeleteMany(deleteFilter)
 
 	assert.Equal(t, nil, err)
+}
+
+func TestInsert(t *testing.T) {
+	td := setup(t)
+	defer td()
+
+	testCaseObjectID, _ := primitive.ObjectIDFromHex("630a226b6303e67f7a003a43")
+	time := time.Now()
+
+	tests := []struct {
+		Model              model.URL
+		CreateShortUrlFunc func(string, string) string
+		Err                interface{}
+	}{
+		{
+			Model: model.URL{
+				ID:          testCaseObjectID,
+				OwnerIP:     "https://example.com/0",
+				OriginalURL: "127.0.0.1",
+				ShortURL:    "12345678",
+				CreatedAt:   primitive.NewDateTimeFromTime(time),
+			},
+			CreateShortUrlFunc: func(original_url, owner_ip string) string {
+				return "12345678"
+			},
+			Err: nil,
+		},
+	}
+
+	for _, test := range tests {
+		mockURLRepo.EXPECT().Insert(test.Model.OriginalURL, test.Model.OwnerIP, test.Model.ShortURL).Return(&test.Model, test.Err)
+		result, err := mockService.Insert(test.Model.OriginalURL, test.Model.OwnerIP, test.CreateShortUrlFunc)
+
+		if err != nil && test.Err == nil {
+			t.Error(err)
+		}
+
+		if test.Err != nil {
+			assert.Equal(t, test.Err, err)
+		}
+
+		assert.Equal(t, &test.Model, result)
+	}
+
+}
+
+func TestFind(t *testing.T) {
+	td := setup(t)
+	defer td()
+
+	var ids []primitive.ObjectID
+	for _, row := range MockData {
+		ids = append(ids, row.ID)
+	}
+
+	findFilter := bson.M{"_id": bson.M{"$in": ids}}
+	mockURLRepo.EXPECT().Find(findFilter).Return(MockData, nil)
+	result, err := mockService.Find(findFilter)
+
+	assert.Equal(t, nil, err)
+	assert.Equal(t, MockData, result)
 }
