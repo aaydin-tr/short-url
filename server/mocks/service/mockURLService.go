@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	model "github.com/AbdurrahmanA/short-url/model"
+	service "github.com/AbdurrahmanA/short-url/service"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -79,17 +80,18 @@ func (mr *MockURLRepoMockRecorder) FindOne(url interface{}) *gomock.Call {
 }
 
 // Insert mocks base method.
-func (m *MockURLRepo) Insert(data interface{}) error {
+func (m *MockURLRepo) Insert(original_url, owner_ip, short_url string) (*model.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Insert", data)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "Insert", original_url, owner_ip, short_url)
+	ret0, _ := ret[0].(*model.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Insert indicates an expected call of Insert.
-func (mr *MockURLRepoMockRecorder) Insert(data interface{}) *gomock.Call {
+func (mr *MockURLRepoMockRecorder) Insert(original_url, owner_ip, short_url interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockURLRepo)(nil).Insert), data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockURLRepo)(nil).Insert), original_url, owner_ip, short_url)
 }
 
 // MockIURLService is a mock of IURLService interface.
@@ -115,61 +117,61 @@ func (m *MockIURLService) EXPECT() *MockIURLServiceMockRecorder {
 	return m.recorder
 }
 
-// DeleteExpiredURLs mocks base method.
-func (m *MockIURLService) DeleteExpiredURLs(rows []model.URL) error {
+// DeleteMany mocks base method.
+func (m *MockIURLService) DeleteMany(filter interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteExpiredURLs", rows)
+	ret := m.ctrl.Call(m, "DeleteMany", filter)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteExpiredURLs indicates an expected call of DeleteExpiredURLs.
-func (mr *MockIURLServiceMockRecorder) DeleteExpiredURLs(rows interface{}) *gomock.Call {
+// DeleteMany indicates an expected call of DeleteMany.
+func (mr *MockIURLServiceMockRecorder) DeleteMany(filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteExpiredURLs", reflect.TypeOf((*MockIURLService)(nil).DeleteExpiredURLs), rows)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteMany", reflect.TypeOf((*MockIURLService)(nil).DeleteMany), filter)
 }
 
-// FindExpiredURLs mocks base method.
-func (m *MockIURLService) FindExpiredURLs() ([]model.URL, error) {
+// Find mocks base method.
+func (m *MockIURLService) Find(filter interface{}) ([]model.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindExpiredURLs")
+	ret := m.ctrl.Call(m, "Find", filter)
 	ret0, _ := ret[0].([]model.URL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindExpiredURLs indicates an expected call of FindExpiredURLs.
-func (mr *MockIURLServiceMockRecorder) FindExpiredURLs() *gomock.Call {
+// Find indicates an expected call of Find.
+func (mr *MockIURLServiceMockRecorder) Find(filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindExpiredURLs", reflect.TypeOf((*MockIURLService)(nil).FindExpiredURLs))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockIURLService)(nil).Find), filter)
 }
 
-// Get mocks base method.
-func (m *MockIURLService) Get(shortURL string) (string, error) {
+// FindOneWithShortURL mocks base method.
+func (m *MockIURLService) FindOneWithShortURL(shortURL string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", shortURL)
+	ret := m.ctrl.Call(m, "FindOneWithShortURL", shortURL)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// Get indicates an expected call of Get.
-func (mr *MockIURLServiceMockRecorder) Get(shortURL interface{}) *gomock.Call {
+// FindOneWithShortURL indicates an expected call of FindOneWithShortURL.
+func (mr *MockIURLServiceMockRecorder) FindOneWithShortURL(shortURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockIURLService)(nil).Get), shortURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindOneWithShortURL", reflect.TypeOf((*MockIURLService)(nil).FindOneWithShortURL), shortURL)
 }
 
 // Insert mocks base method.
-func (m *MockIURLService) Insert(url, ip string) (*model.URL, error) {
+func (m *MockIURLService) Insert(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Insert", url, ip)
+	ret := m.ctrl.Call(m, "Insert", url, ip, createShortUrl)
 	ret0, _ := ret[0].(*model.URL)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Insert indicates an expected call of Insert.
-func (mr *MockIURLServiceMockRecorder) Insert(url, ip interface{}) *gomock.Call {
+func (mr *MockIURLServiceMockRecorder) Insert(url, ip, createShortUrl interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockIURLService)(nil).Insert), url, ip)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockIURLService)(nil).Insert), url, ip, createShortUrl)
 }

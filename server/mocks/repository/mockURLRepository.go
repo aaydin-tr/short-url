@@ -79,15 +79,16 @@ func (mr *MockURLRepoMockRecorder) FindOne(url interface{}) *gomock.Call {
 }
 
 // Insert mocks base method.
-func (m *MockURLRepo) Insert(data interface{}) error {
+func (m *MockURLRepo) Insert(original_url, owner_ip, short_url string) (*model.URL, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Insert", data)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "Insert", original_url, owner_ip, short_url)
+	ret0, _ := ret[0].(*model.URL)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Insert indicates an expected call of Insert.
-func (mr *MockURLRepoMockRecorder) Insert(data interface{}) *gomock.Call {
+func (mr *MockURLRepoMockRecorder) Insert(original_url, owner_ip, short_url interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockURLRepo)(nil).Insert), data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockURLRepo)(nil).Insert), original_url, owner_ip, short_url)
 }
