@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -42,7 +43,7 @@ func setup(t *testing.T) func() {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestFindOneWithShortURL(t *testing.T) {
 	td := setup(t)
 	defer td()
 
@@ -82,6 +83,20 @@ func TestDeleteMany(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
+func TestDeleteManyWithError(t *testing.T) {
+	td := setup(t)
+	defer td()
+
+	var ids []primitive.ObjectID
+
+	deleteFilter := bson.M{"_id": bson.M{"$in": ids}}
+	mockURLRepo.EXPECT().DeleteMany(deleteFilter).DoAndReturn(func(filter interface{}) error {
+		return errors.New("something went wrong")
+	})
+	err := mockService.DeleteMany(deleteFilter)
+	assert.Equal(t, errors.New("something went wrong"), err)
+}
+
 func TestInsert(t *testing.T) {
 	td := setup(t)
 	defer td()
@@ -107,6 +122,19 @@ func TestInsert(t *testing.T) {
 			},
 			Err: nil,
 		},
+		{
+			Model: model.URL{
+				ID:          testCaseObjectID,
+				OwnerIP:     "https://example.com/0",
+				OriginalURL: "127.0.0.1",
+				ShortURL:    "12345678",
+				CreatedAt:   primitive.NewDateTimeFromTime(time),
+			},
+			CreateShortUrlFunc: func(original_url, owner_ip string) string {
+				return "12345678"
+			},
+			Err: errors.New("something went wrong"),
+		},
 	}
 
 	for _, test := range tests {
@@ -119,9 +147,9 @@ func TestInsert(t *testing.T) {
 
 		if test.Err != nil {
 			assert.Equal(t, test.Err, err)
+		} else {
+			assert.Equal(t, &test.Model, result)
 		}
-
-		assert.Equal(t, &test.Model, result)
 	}
 
 }
@@ -141,4 +169,19 @@ func TestFind(t *testing.T) {
 
 	assert.Equal(t, nil, err)
 	assert.Equal(t, MockData, result)
+}
+
+func TestFindWithErr(t *testing.T) {
+	td := setup(t)
+	defer td()
+
+	var ids []primitive.ObjectID
+
+	findFilter := bson.M{"_id": bson.M{"$in": ids}}
+	mockURLRepo.EXPECT().Find(findFilter).DoAndReturn(func(filter interface{}) ([]model.URL, error) {
+		return nil, errors.New("something went wrong")
+	})
+	_, err := mockService.Find(findFilter)
+
+	assert.Equal(t, errors.New("something went wrong"), err)
 }

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+	"reflect"
 	"testing"
 	"time"
 
@@ -36,7 +38,16 @@ func redisSetup(t *testing.T) func() {
 	}
 }
 
-func TestSetRedis(t *testing.T) {
+func TestNewRedisService(t *testing.T) {
+	td := redisSetup(t)
+	defer td()
+
+	if reflect.TypeOf(*mockRedisService) != reflect.TypeOf((*RedisService)(nil)).Elem() {
+		t.Errorf("New Redis Service should be return -> %v got -> %v", reflect.TypeOf((*RedisService)(nil)).Elem(), reflect.TypeOf(*mockRedisService))
+	}
+}
+
+func TestSetRedisWithoutError(t *testing.T) {
 	td := redisSetup(t)
 	defer td()
 
@@ -44,8 +55,21 @@ func TestSetRedis(t *testing.T) {
 
 	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).Return(nil)
 	err := mockRedisService.Set(test.key, test.value, test.ttl)
+	assert.Equal(t, nil, err)
+}
 
-	assert.Equal(t, err, nil)
+func TestSetRedisWithError(t *testing.T) {
+	td := redisSetup(t)
+	defer td()
+
+	test := redisMockType{key: "test", value: "test1", ttl: time.Minute}
+
+	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).DoAndReturn(func(key string, value interface{}, ttl time.Duration) error {
+		return errors.New("something went wrong")
+	})
+	err := mockRedisService.Set(test.key, test.value, test.ttl)
+
+	assert.Equal(t, errors.New("something went wrong"), err)
 }
 
 func TestGetRedis(t *testing.T) {
