@@ -8,7 +8,7 @@
 
 
   const onKeyPress = (e) => {
-    if (e.charCode === 13) handleNewShortURL();
+    if (e.charCode === 13) handleNewShortURL(url);
   };
 
   const onClickHandler = async (url) => {
