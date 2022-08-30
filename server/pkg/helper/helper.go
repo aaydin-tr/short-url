@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 const sha256Length = 64
@@ -43,4 +44,18 @@ func MsgForTag(fe validator.FieldError) string {
 		return "Input should be 8 characters long"
 	}
 	return fe.Error()
+}
+
+func GetHerokuClintIP(c *fiber.Ctx) string {
+	xForwardedFor := c.IPs()
+
+	if len(xForwardedFor) == 0 || xForwardedFor == nil {
+		return c.IP()
+	}
+
+	if len(xForwardedFor) == 1 {
+		return xForwardedFor[0]
+	}
+
+	return xForwardedFor[len(xForwardedFor)-1]
 }
