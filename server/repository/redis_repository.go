@@ -32,13 +32,7 @@ func (r *RedisRepository) Set(key string, value interface{}, ttl time.Duration) 
 }
 
 func (r *RedisRepository) Get(key string) (string, error) {
-	cmd := r.rdb.Get(r.ctx, key)
-	cmdErr := cmd.Err()
-	if cmdErr != redis.Nil {
-		return cmd.Val(), nil
-	}
-
-	return "", cmdErr
+	return r.rdb.Get(r.ctx, key).Result()
 }
 
 func (r *RedisRepository) Delete(key string) error {
