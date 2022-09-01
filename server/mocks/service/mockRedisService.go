@@ -35,11 +35,12 @@ func (m *MockRedisRepo) EXPECT() *MockRedisRepoMockRecorder {
 }
 
 // Delete mocks base method.
-func (m *MockRedisRepo) Delete(key string) error {
+func (m *MockRedisRepo) Delete(key string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", key)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Delete indicates an expected call of Delete.
@@ -64,11 +65,12 @@ func (mr *MockRedisRepoMockRecorder) Get(key interface{}) *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockRedisRepo) Set(key string, value interface{}, ttl time.Duration) error {
+func (m *MockRedisRepo) Set(key string, value interface{}, ttl time.Duration) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Set", key, value, ttl)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Set indicates an expected call of Set.

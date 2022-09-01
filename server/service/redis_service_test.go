@@ -53,7 +53,7 @@ func TestSetRedisWithoutError(t *testing.T) {
 
 	test := redisMockType{key: "test", value: "test1", ttl: time.Minute}
 
-	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).Return(nil)
+	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).Return("OK", nil)
 	err := mockRedisService.Set(test.key, test.value, test.ttl)
 	assert.Equal(t, nil, err)
 }
@@ -64,11 +64,10 @@ func TestSetRedisWithError(t *testing.T) {
 
 	test := redisMockType{key: "test", value: "test1", ttl: time.Minute}
 
-	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).DoAndReturn(func(key string, value interface{}, ttl time.Duration) error {
-		return errors.New("something went wrong")
+	mockRedisRepo.EXPECT().Set(test.key, test.value, test.ttl).DoAndReturn(func(key string, value interface{}, ttl time.Duration) (string, error) {
+		return "", errors.New("something went wrong")
 	})
 	err := mockRedisService.Set(test.key, test.value, test.ttl)
-
 	assert.Equal(t, errors.New("something went wrong"), err)
 }
 
@@ -97,7 +96,7 @@ func TestDeleteRedis(t *testing.T) {
 	defer td()
 
 	for _, test := range RedisTestCases {
-		mockRedisRepo.EXPECT().Delete(test.arg1).Return(test.err)
+		mockRedisRepo.EXPECT().Delete(test.arg1).Return(int64(0), test.err)
 		err := mockRedisService.Delete(test.arg1)
 
 		assert.Equal(t, test.err, err)

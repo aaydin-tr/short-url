@@ -6,9 +6,9 @@ import (
 
 // go:generate mockgen -source=./service/redis_service.go -destination=./mocks/service/mockRedisService.go -package=service  RedisRepo
 type RedisRepo interface {
-	Set(key string, value interface{}, ttl time.Duration) error
+	Set(key string, value interface{}, ttl time.Duration) (string, error)
 	Get(key string) (string, error)
-	Delete(key string) error
+	Delete(key string) (int64, error)
 }
 
 type RedisService struct {
@@ -20,7 +20,7 @@ func NewRedisService(redisShortURLRepo RedisRepo) *RedisService {
 }
 
 func (r *RedisService) Set(key string, value interface{}, ttl time.Duration) error {
-	err := r.redisShortURLRepo.Set(key, value, ttl)
+	_, err := r.redisShortURLRepo.Set(key, value, ttl)
 	if err != nil {
 		return err
 	}
@@ -36,7 +36,7 @@ func (r *RedisService) Get(key string) (string, error) {
 }
 
 func (r *RedisService) Delete(key string) error {
-	err := r.redisShortURLRepo.Delete(key)
+	_, err := r.redisShortURLRepo.Delete(key)
 	if err != nil {
 		return err
 	}
