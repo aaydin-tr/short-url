@@ -6,7 +6,6 @@ require (
 	github.com/caarlos0/env v3.5.0+incompatible
 	github.com/go-co-op/gocron v1.17.0
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redismock/v8 v8.0.6
 	github.com/gofiber/fiber/v2 v2.36.0
