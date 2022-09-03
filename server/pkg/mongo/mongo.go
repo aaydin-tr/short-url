@@ -20,11 +20,14 @@ type Mongo struct {
 	URLsCollection *mongo.Collection
 }
 
-func NewMongoDBClient(url, collectionName, database string) *Mongo {
+func NewMongoDBClient(url, username, pass, collectionName, database string) *Mongo {
 	context := context.Background()
 
 	doOnce.Do(func() {
-		cli, err := mongo.Connect(context, options.Client().ApplyURI(url))
+		cli, err := mongo.Connect(context, options.Client().ApplyURI(url).SetAuth(options.Credential{
+			Username: username,
+			Password: pass,
+		}))
 		if err != nil {
 			panic(err)
 		}
