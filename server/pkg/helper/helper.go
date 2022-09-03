@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"math/rand"
+	"net"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -53,9 +54,19 @@ func GetHerokuClintIP(c *fiber.Ctx) string {
 		return c.IP()
 	}
 
-	if len(xForwardedFor) == 1 {
-		return xForwardedFor[0]
+	lastXForwardedFor := xForwardedFor[len(xForwardedFor)-1]
+	isValidIP := isValidIPAddress(lastXForwardedFor)
+	if isValidIP {
+		return lastXForwardedFor
 	}
 
-	return xForwardedFor[len(xForwardedFor)-1]
+	return c.IP()
+}
+
+func isValidIPAddress(ip string) bool {
+	if net.ParseIP(ip) == nil {
+		return false
+	}
+	return true
+
 }
