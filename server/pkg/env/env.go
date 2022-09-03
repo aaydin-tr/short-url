@@ -33,7 +33,7 @@ func ParseEnv() *ENV {
 	doOnce.Do(func() {
 		err := godotenv.Load()
 
-		if err != nil && err.Error() != "open file.go: no such file or directory" {
+		if err != nil {
 			log.Fatalf("Error while loading .env file: %s", err)
 			os.Exit(1)
 		}
