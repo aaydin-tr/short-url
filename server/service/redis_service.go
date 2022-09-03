@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// go:generate mockgen -source=./service/redis_service.go -destination=./mocks/service/mockRedisService.go -package=service  RedisRepo
 type RedisRepo interface {
 	Set(key string, value interface{}, ttl time.Duration) (string, error)
 	Get(key string) (string, error)
@@ -13,6 +12,13 @@ type RedisRepo interface {
 
 type RedisService struct {
 	redisShortURLRepo RedisRepo
+}
+
+// go:generate mockgen -source=./service/redis_service.go -destination=./mocks/service/mockRedisService.go -package=service  IRedisService
+type IRedisService interface {
+	Set(key string, value interface{}, ttl time.Duration) error
+	Get(key string) (string, error)
+	Delete(key string) error
 }
 
 func NewRedisService(redisShortURLRepo RedisRepo) *RedisService {

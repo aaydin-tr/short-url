@@ -78,3 +78,69 @@ func (mr *MockRedisRepoMockRecorder) Set(key, value, ttl interface{}) *gomock.Ca
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockRedisRepo)(nil).Set), key, value, ttl)
 }
+
+// MockIRedisService is a mock of IRedisService interface.
+type MockIRedisService struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRedisServiceMockRecorder
+}
+
+// MockIRedisServiceMockRecorder is the mock recorder for MockIRedisService.
+type MockIRedisServiceMockRecorder struct {
+	mock *MockIRedisService
+}
+
+// NewMockIRedisService creates a new mock instance.
+func NewMockIRedisService(ctrl *gomock.Controller) *MockIRedisService {
+	mock := &MockIRedisService{ctrl: ctrl}
+	mock.recorder = &MockIRedisServiceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIRedisService) EXPECT() *MockIRedisServiceMockRecorder {
+	return m.recorder
+}
+
+// Delete mocks base method.
+func (m *MockIRedisService) Delete(key string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", key)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockIRedisServiceMockRecorder) Delete(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockIRedisService)(nil).Delete), key)
+}
+
+// Get mocks base method.
+func (m *MockIRedisService) Get(key string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", key)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockIRedisServiceMockRecorder) Get(key interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockIRedisService)(nil).Get), key)
+}
+
+// Set mocks base method.
+func (m *MockIRedisService) Set(key string, value interface{}, ttl time.Duration) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Set", key, value, ttl)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Set indicates an expected call of Set.
+func (mr *MockIRedisServiceMockRecorder) Set(key, value, ttl interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Set", reflect.TypeOf((*MockIRedisService)(nil).Set), key, value, ttl)
+}
