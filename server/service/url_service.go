@@ -23,7 +23,7 @@ type IURLService interface {
 	DeleteMany(filter interface{}) error
 }
 
-func NewURLService(repo URLRepo) *URLService {
+func NewURLService(repo URLRepo) IURLService {
 	return &URLService{repository: repo}
 }
 

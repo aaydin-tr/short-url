@@ -21,7 +21,7 @@ type IRedisService interface {
 	Delete(key string) error
 }
 
-func NewRedisService(redisShortURLRepo RedisRepo) *RedisService {
+func NewRedisService(redisShortURLRepo RedisRepo) IRedisService {
 	return &RedisService{redisShortURLRepo: redisShortURLRepo}
 }
 

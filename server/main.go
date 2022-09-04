@@ -34,7 +34,7 @@ func init() {
 	shortURLRedisRepository := repository.NewRedisRepository(Redis)
 	shortURLRedisService := service.NewRedisService(shortURLRedisRepository)
 
-	Services = service.RegisterServices(shortURLService, shortURLRedisService)
+	Services = &service.Services{ShortURLService: shortURLService, RedisService: shortURLRedisService}
 	Routes = routes.NewShortURLRoutes(Services, Env.ShortURLDomain, Env.URLCacheTTL)
 	AppPort = Env.Port
 
