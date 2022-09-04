@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"reflect"
 	"testing"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 )
 
 var mockRedisRepo *repository.MockRedisRepo
-var mockRedisService *RedisService
+var mockRedisService IRedisService
 
 type redisMockType struct {
 	key   string
@@ -35,15 +34,6 @@ func redisSetup(t *testing.T) func() {
 	return func() {
 		mockRedisService = nil
 		defer ct.Finish()
-	}
-}
-
-func TestNewRedisService(t *testing.T) {
-	td := redisSetup(t)
-	defer td()
-
-	if reflect.TypeOf(*mockRedisService) != reflect.TypeOf((*RedisService)(nil)).Elem() {
-		t.Errorf("New Redis Service should be return -> %v got -> %v", reflect.TypeOf((*RedisService)(nil)).Elem(), reflect.TypeOf(*mockRedisService))
 	}
 }
 

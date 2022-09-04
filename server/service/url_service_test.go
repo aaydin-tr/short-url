@@ -15,7 +15,7 @@ import (
 )
 
 var mockURLRepo *repository.MockURLRepo
-var mockService *URLService
+var mockService IURLService
 
 // TODO: Add more test case
 type testCase struct {
