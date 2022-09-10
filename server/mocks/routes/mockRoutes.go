@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/AbdurrahmanA/short-url/model"
@@ -54,7 +53,6 @@ func (m MockURLService) FindOneWithShortURL(shortURL string) (string, error) {
 }
 
 func (m MockURLService) Find(filter interface{}) ([]model.URL, error) {
-	fmt.Println("asdasd")
 	return m.findMethod(filter)
 }
 
