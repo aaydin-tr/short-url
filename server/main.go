@@ -1,9 +1,12 @@
 package main
 
 import (
+	"os"
+
 	"github.com/AbdurrahmanA/short-url/api"
 	"github.com/AbdurrahmanA/short-url/api/routes"
 	"github.com/AbdurrahmanA/short-url/pkg/env"
+	"github.com/AbdurrahmanA/short-url/pkg/helper"
 	"github.com/AbdurrahmanA/short-url/pkg/logger"
 	"github.com/AbdurrahmanA/short-url/pkg/mongo"
 	"github.com/AbdurrahmanA/short-url/pkg/redis"
@@ -45,6 +48,23 @@ func main() {
 	defer Logger.Sync()
 	defer Redis.Close()
 
+	shutdown := make(chan os.Signal, 1)
+	serverShutdown := make(chan bool)
+	go helper.NotifyShutdown(shutdown)
+
 	scheduler.InitExpiredScheduler(Services.ShortURLService.Find, Services.ShortURLService.DeleteMany, Services.RedisService.Delete)
-	api.InitAPI(AppPort, Env.UserHourlyLimit, Routes)
+	api := api.NewApi(AppPort, Env.UserHourlyLimit, Routes, helper.ErrorHandler, helper.LimiterHandler)
+
+	go func() {
+		<-shutdown
+		Logger.Info("Gracefully shutting down...")
+		err := api.Shutdown()
+		if err != nil {
+			Logger.Sugar().Error("Error while Shutdown Server %s", err.Error())
+		}
+		serverShutdown <- true
+	}()
+
+	api.InitAPI()
+	<-serverShutdown
 }

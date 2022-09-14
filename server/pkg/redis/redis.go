@@ -41,6 +41,10 @@ func (r *Redis) Ping() error {
 	return r.RDB.Ping(r.CTX).Err()
 }
 
-func (r *Redis) Close() error {
-	return r.RDB.Close()
+func (r *Redis) Close() {
+	err := r.RDB.Close()
+	if err != nil {
+		zap.S().Error("Error while disconnecting from Redis", err)
+	}
+	zap.S().Info("Redis disconnected successfully")
 }

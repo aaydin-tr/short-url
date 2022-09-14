@@ -5,8 +5,12 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
+	"github.com/AbdurrahmanA/short-url/api/response"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -64,9 +68,29 @@ func GetHerokuClintIP(c *fiber.Ctx) string {
 }
 
 func isValidIPAddress(ip string) bool {
-	if net.ParseIP(ip) == nil {
-		return false
-	}
-	return true
+	return net.ParseIP(ip) != nil
+}
 
+func ErrorHandler(c *fiber.Ctx, err error) error {
+	code := fiber.StatusBadRequest
+
+	if e, ok := err.(*fiber.Error); ok {
+		code = e.Code
+	}
+
+	return c.Status(code).JSON(response.ErrorResponse{
+		Message: err.Error(),
+		Status:  code,
+	})
+}
+
+func LimiterHandler(c *fiber.Ctx) error {
+	return c.Status(fiber.StatusTooManyRequests).JSON(response.ErrorResponse{
+		Message: "Too many attempts please try again later",
+		Status:  fiber.StatusTooManyRequests,
+	})
+}
+
+func NotifyShutdown(shutdown chan os.Signal) {
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 }
