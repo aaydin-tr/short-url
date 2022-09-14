@@ -60,7 +60,7 @@ func main() {
 		Logger.Info("Gracefully shutting down...")
 		err := api.Shutdown()
 		if err != nil {
-			Logger.Sugar().Error("Error while Shutdown Server %s", err.Error())
+			Logger.Sugar().Error("Error while shutting down server %s", err.Error())
 		}
 		serverShutdown <- true
 	}()
