@@ -8,7 +8,7 @@ import (
 
 	"github.com/AbdurrahmanA/short-url/api/request"
 	"github.com/AbdurrahmanA/short-url/api/response"
-	"github.com/AbdurrahmanA/short-url/mocks/routes"
+	mockservice "github.com/AbdurrahmanA/short-url/mocks/service"
 	"github.com/AbdurrahmanA/short-url/model"
 	"github.com/AbdurrahmanA/short-url/service"
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +28,7 @@ func setupRedisService(
 	deleteMethod func(key string) error,
 ) func() {
 
-	mockRedisService = routes.NewMockRedisService(setMethod, getMethod, deleteMethod)
+	mockRedisService = mockservice.NewMockRedisService(setMethod, getMethod, deleteMethod)
 	mockServices.RedisService = mockRedisService
 	return func() {
 		mockRedisService = nil
@@ -43,7 +43,7 @@ func setupURLService(
 	deleteManyMethod func(filter interface{}) error,
 ) func() {
 
-	mockURLService = routes.NewMockURLService(insertMethod, findOneWithShortURLMethod, findMethod, deleteManyMethod)
+	mockURLService = mockservice.NewMockURLService(insertMethod, findOneWithShortURLMethod, findMethod, deleteManyMethod)
 	mockServices.ShortURLService = mockURLService
 	return func() {
 		mockURLService = nil

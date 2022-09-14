@@ -15,7 +15,6 @@ type URLService struct {
 	repository URLRepo
 }
 
-// go:generate mockgen -source=./service/url_service.go -destination=./mocks/service/mockURLService.go -package=service  IURLService
 type IURLService interface {
 	Insert(url, ip string, createShortUrl CreateShortUrlFunc) (*model.URL, error)
 	FindOneWithShortURL(shortURL string) (string, error)

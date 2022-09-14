@@ -14,7 +14,6 @@ type RedisService struct {
 	redisShortURLRepo RedisRepo
 }
 
-// go:generate mockgen -source=./service/redis_service.go -destination=./mocks/service/mockRedisService.go -package=service  IRedisService
 type IRedisService interface {
 	Set(key string, value interface{}, ttl time.Duration) error
 	Get(key string) (string, error)
