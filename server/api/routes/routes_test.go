@@ -22,7 +22,6 @@ var mockURLService service.IURLService
 var mockRedisService service.IRedisService
 
 func setupRedisService(
-	t *testing.T,
 	setMethod func(key string, value interface{}, ttl time.Duration) error,
 	getMethod func(key string) (string, error),
 	deleteMethod func(key string) error,
@@ -36,7 +35,6 @@ func setupRedisService(
 }
 
 func setupURLService(
-	t *testing.T,
 	insertMethod func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error),
 	findOneWithShortURLMethod func(shortURL string) (string, error),
 	findMethod func(filter interface{}) ([]model.URL, error),
@@ -52,13 +50,12 @@ func setupURLService(
 
 func TestCreateNewShortURLWithoutError(t *testing.T) {
 	dt := setupURLService(
-		t,
 		func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
 			return &model.URL{OriginalURL: url, OwnerIP: ip, ShortURL: "12345678", CreatedAt: primitive.NewDateTimeFromTime(time.Now())}, nil
 		},
-		func(shortURL string) (string, error) { return "", nil },
-		func(filter interface{}) ([]model.URL, error) { return nil, nil },
-		func(filter interface{}) error { return nil },
+		nil,
+		nil,
+		nil,
 	)
 	defer dt()
 
@@ -83,13 +80,12 @@ func TestCreateNewShortURLWithoutError(t *testing.T) {
 
 func TestCreateNewShortURLWithError(t *testing.T) {
 	dt := setupURLService(
-		t,
 		func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
 			return nil, errors.New("something went wrong")
 		},
-		func(shortURL string) (string, error) { return "", nil },
-		func(filter interface{}) ([]model.URL, error) { return nil, nil },
-		func(filter interface{}) error { return nil },
+		nil,
+		nil,
+		nil,
 	)
 	defer dt()
 
@@ -111,16 +107,14 @@ func TestCreateNewShortURLWithError(t *testing.T) {
 
 func TestRedirectShortURLWithRedisCache(t *testing.T) {
 	dtUrl := setupURLService(
-		t,
 		func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
 			return nil, nil
 		},
-		func(shortURL string) (string, error) { return "", nil },
-		func(filter interface{}) ([]model.URL, error) { return nil, nil },
-		func(filter interface{}) error { return nil },
+		nil,
+		nil,
+		nil,
 	)
 	dtRedis := setupRedisService(
-		t,
 		func(key string, value interface{}, ttl time.Duration) error {
 			return nil
 		},
@@ -148,16 +142,12 @@ func TestRedirectShortURLWithRedisCache(t *testing.T) {
 
 func TestRedirectShortURLWithoutError(t *testing.T) {
 	dtUrl := setupURLService(
-		t,
-		func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
-			return nil, nil
-		},
+		nil,
 		func(shortURL string) (string, error) { return "https://github.com/AbdurrahmanA/short-url", nil },
-		func(filter interface{}) ([]model.URL, error) { return nil, nil },
-		func(filter interface{}) error { return nil },
+		nil,
+		nil,
 	)
 	dtRedis := setupRedisService(
-		t,
 		func(key string, value interface{}, ttl time.Duration) error {
 			return nil
 		},
@@ -185,16 +175,12 @@ func TestRedirectShortURLWithoutError(t *testing.T) {
 
 func TestRedirectShortURLWithError(t *testing.T) {
 	dtUrl := setupURLService(
-		t,
-		func(url, ip string, createShortUrl service.CreateShortUrlFunc) (*model.URL, error) {
-			return nil, nil
-		},
+		nil,
 		func(shortURL string) (string, error) { return "", errors.New("not found") },
-		func(filter interface{}) ([]model.URL, error) { return nil, nil },
-		func(filter interface{}) error { return nil },
+		nil,
+		nil,
 	)
 	dtRedis := setupRedisService(
-		t,
 		func(key string, value interface{}, ttl time.Duration) error {
 			return nil
 		},
