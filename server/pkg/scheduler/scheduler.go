@@ -21,8 +21,8 @@ func InitExpiredScheduler(find func(filter interface{}) ([]model.URL, error), de
 		redisDelete func(key string) error,
 	) {
 		now := time.Now()
-		oneMonthAgo := now.AddDate(0, 0, -(*ShortUrlTTL))
-		filter := bson.M{"created_at": bson.M{"$lt": primitive.NewDateTimeFromTime(oneMonthAgo)}}
+		urlExpirationTime := now.AddDate(0, 0, -(*ShortUrlTTL))
+		filter := bson.M{"created_at": bson.M{"$lt": primitive.NewDateTimeFromTime(urlExpirationTime)}}
 
 		rows, err := find(filter)
 		if err != nil {
