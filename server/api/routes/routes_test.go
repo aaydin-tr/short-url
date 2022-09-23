@@ -152,7 +152,7 @@ func TestRedirectShortURLWithoutError(t *testing.T) {
 			return nil
 		},
 		func(key string) (string, error) {
-			return "", errors.New("not found")
+			return "", errors.New("Short URL Not Found")
 		},
 		func(key string) error {
 			return nil
@@ -176,7 +176,7 @@ func TestRedirectShortURLWithoutError(t *testing.T) {
 func TestRedirectShortURLWithError(t *testing.T) {
 	dtUrl := setupURLService(
 		nil,
-		func(shortURL string) (string, error) { return "", errors.New("not found") },
+		func(shortURL string) (string, error) { return "", errors.New("Short URL Not Found") },
 		nil,
 		nil,
 	)
@@ -185,7 +185,7 @@ func TestRedirectShortURLWithError(t *testing.T) {
 			return nil
 		},
 		func(key string) (string, error) {
-			return "", errors.New("not found")
+			return "", errors.New("Short URL Not Found")
 		},
 		func(key string) error {
 			return nil
@@ -208,6 +208,6 @@ func TestRedirectShortURLWithError(t *testing.T) {
 	var response = &response.ErrorResponse{}
 	err := json.Unmarshal(res.Body(), response)
 	assert.NoError(t, err)
-	assert.Equal(t, "not found", response.Message)
+	assert.Equal(t, "Short URL Not Found", response.Message)
 	assert.Equal(t, fiber.StatusNotFound, response.Status)
 }
