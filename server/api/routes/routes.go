@@ -55,10 +55,11 @@ func (r *Routes) RedirectShortURL(c *fiber.Ctx) error {
 	originalURL, err := r.services.ShortURLService.FindOneWithShortURL(shortURL)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(response.ErrorResponse{
-			Message: err.Error(),
+			Message: "Short URL Not Found",
 			Status:  fiber.StatusNotFound,
 		})
 	}
-	r.services.RedisService.Set(shortURL, originalURL, time.Duration(r.shortURLCacheTTL*24*int(time.Hour)))
+
+	go r.services.RedisService.Set(shortURL, originalURL, time.Duration(r.shortURLCacheTTL*24*int(time.Hour)))
 	return c.Redirect(originalURL, fiber.StatusFound)
 }
