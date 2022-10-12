@@ -3,7 +3,7 @@
   <h3 align="center">Short-URL</h3>
 
   <p align="center">
-    An URL shortener system
+    A URL shortener system
     <br />
     <br />
     <a href="#demo">View Demo</a>
@@ -29,7 +29,7 @@
 
 ## About The Project
 
-This project build based on karanpratapsingh [url-shortener](https://github.com/karanpratapsingh/system-design#url-shortener) system desing guideline.
+This project build based on karanpratapsingh [url-shortener](https://github.com/karanpratapsingh/system-design#url-shortener) system design guideline.
 
 #### What is a URL Shortener?
 
