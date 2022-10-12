@@ -16,7 +16,6 @@
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#demo">Demo</a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
@@ -41,13 +40,6 @@ For example, the following long URL can be changed to a shorter URL.
 **Long URL**: [https://karanpratapsingh.com/courses/system-design/url-shortener](https://karanpratapsingh.com/courses/system-design/url-shortener)
 
 **Short URL**: [https://bit.ly/3I71d3o](https://bit.ly/3I71d3o)
-
-## Demo
-
-**Back-End**: [https://short-urls-backend.herokuapp.com/](https://short-urls-backend.herokuapp.com/)
-> :warning: The first request may take a while because Heroku sleep mode is on in the free tier.
-
-**Front-End**: [https://short-urls-frontend.netlify.app/](https://short-urls-frontend.netlify.app/)
 
 ## Getting Started
 

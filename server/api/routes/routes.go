@@ -26,7 +26,7 @@ func NewShortURLRoutes(services *service.Services, shortUrlDomain string, shortU
 }
 
 func (r *Routes) CreateNewShortURL(c *fiber.Ctx) error {
-	userIP := helper.GetHerokuClintIP(c)
+	userIP := c.IP()
 	body := c.Locals("body").(*request.NewURL)
 
 	row, err := r.services.ShortURLService.Insert(body.URL, userIP, helper.CreateShortUrl)
